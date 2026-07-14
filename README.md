@@ -1,4 +1,4 @@
-# 🎬 Movie Recommender System — Item-Based Collaborative Filtering
+# Movie Recommender System — Item-Based Collaborative Filtering
 
 A movie recommendation engine built on the **MovieLens 100K** dataset. Given a handful of movies you've rated, the system recommends what to watch next by finding films that other users rated similarly — the same core idea behind Netflix and Amazon recommendations.
 <img width="1624" height="1470" alt="Movie recommender system png" src="https://github.com/user-attachments/assets/54af3408-0da6-4de7-b138-c5806470f8b9" />
