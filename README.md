@@ -20,7 +20,7 @@ Rating *Titanic (1997)* highly surfaces correlated films like *Romeo and Juliet*
 ## Project Structure
 
 ```
-├── Project_8_-_Movie_Recommender_System.ipynb   # Main notebook (EDA → filtering → recommendations)
+├── Project-_Movie_Recommender_System.ipynb   # Main notebook (EDA → filtering → recommendations)
 ├── u.data                                        # MovieLens 100K ratings (user_id, item_id, rating, timestamp)
 ├── Movie_Id_Titles                               # Movie ID → title mapping
 ├── My_Ratings.csv                                # Your own ratings used to generate recommendations
@@ -42,7 +42,7 @@ Rating *Titanic (1997)* highly surfaces correlated films like *Romeo and Juliet*
 git clone https://github.com/<your-username>/movie-recommender-system.git
 cd movie-recommender-system
 pip install pandas numpy matplotlib seaborn jupyter
-jupyter notebook Project_8_-_Movie_Recommender_System.ipynb
+jupyter notebook Project -_Movie_Recommender_System.ipynb
 ```
 
 To get your own recommendations, edit `My_Ratings.csv` with movies you've seen (exact titles from the dataset) and your 1–5 ratings, then run the final section of the notebook.
@@ -63,7 +63,14 @@ To get your own recommendations, edit `My_Ratings.csv` with movies you've seen (
 - Handling the cold-start problem for new users/movies
 - Serving recommendations via a FastAPI endpoint
 
-## Author
+## License
 
-**Vishal Kumar** — ML/AI Engineer
-[LinkedIn](https://www.linkedin.com/in/vishal-kumar-819585275/)
+MIT — use freely for interview prep, learning, or as a starting point for
+your own system design writeups.
+
+## About Me
+
+**Vishal Kumar**
+- [GitHub](https://github.com/VishalKumar-GitHub)
+
+📫 **Follow me** on [Xing](https://www.xing.com/profile/Vishal_Kumar055381/web_profiles?expandNeffi=true) | [LinkedIn](https://www.linkedin.com/in/vishal-kumar-819585275/)
