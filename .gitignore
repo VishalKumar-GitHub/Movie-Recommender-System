@@ -1,6 +1,0 @@
-.env
-.tmdb_cache/
-*.joblib
-__pycache__/
-.ipynb_checkpoints/
-ml-latest-small/
