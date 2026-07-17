@@ -174,7 +174,7 @@ sim_scores = score_map_for(selected_title)
 
 featured = rec.df.nlargest(10, "vote_average").to_dict(orient="records")
 recent = rec.df[rec.df["release_date"].notna()].sort_values("release_date", ascending=False).head(10).to_dict(orient="records")
-primary_genre = selected_movie.get("genres", "").split()[0] if selected_movie.get("genres") else "" 
+primary_genre = selected_movie.get("genres", "").split()[0] if selected_movie.get("genres") else ""
 if primary_genre:
     genre_list = genre_movies(primary_genre)
 else:
@@ -213,3 +213,4 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
