@@ -1,78 +1,76 @@
-# Movie Recommender System — Item-Based Collaborative Filtering
+# Movie Recommendation System
 
-A movie recommendation engine built on the **MovieLens 100K** dataset. Given a handful of movies you've rated, the system recommends what to watch next by finding films that other users rated similarly — the same core idea behind Netflix and Amazon recommendations.
-<img width="1624" height="1470" alt="Movie recommender system png" src="https://github.com/user-attachments/assets/54af3408-0da6-4de7-b138-c5806470f8b9" />
+A content-based movie recommender built on TMDB metadata. Given a film, it returns the
+ten most similar titles, ranked by cosine similarity over a TF-IDF representation of
+genres, keywords, cast, director, and plot overview.
 
+## Approach
 
-## How It Works
+| Stage | Detail |
+|---|---|
+| Data | TMDB API — ~500 popular films, detail responses cached to disk |
+| Features | Genres (weighted 3x), keywords, top-5 cast, director (2x), overview |
+| Vectorisation | TF-IDF, unigrams + bigrams, `min_df=2`, English stop words removed |
+| Similarity | Cosine, self-similarity zeroed |
+| Evaluation | Mean genre Jaccard overlap against a random baseline |
 
-**Item-based collaborative filtering** recommends movies based on relationships between *items* (movies) rather than users:
+Multi-word names are underscore-joined so `Christopher_Nolan` is a single token. Genres are
+repeated because TF-IDF weights by frequency, and one genre mention would otherwise be
+drowned out by a 100-word overview.
 
-1. Build a **user × movie ratings matrix** from 100,000 ratings
-2. Compute **Pearson correlations** between every pair of movies (`min_periods=80` to filter out movies with too few ratings and avoid noisy correlations)
-3. Take the user's own ratings, look up each rated movie's correlation vector, and **weight similarities by the user's rating**
-4. Rank the results — the top-scoring movies are the recommendations
+## Why content-based and not collaborative?
 
-The item-based approach scales better than user-based filtering (movies number in the thousands, users in the billions) and is more stable over time, since a movie's characteristics don't change the way user tastes do.
+Collaborative filtering learns from user rating patterns. TMDB's public API exposes only
+aggregate vote averages, not per-user ratings, so a genuine CF model cannot be trained from
+it. Rather than ship a CF component that silently returns nothing, this project is
+content-based by design. Section 7 of the notebook shows how to blend in a real CF signal
+fitted on the MovieLens ratings dataset.
 
-## Example
-
-Rating *Titanic (1997)* highly surfaces correlated films like *Romeo and Juliet* — movies that the same audience rated the same way. The final recommender takes a personal ratings file (`My_Ratings.csv`) and produces a ranked top-10 watchlist.
-
-## Project Structure
-
-```
-├── Project-_Movie_Recommender_System.ipynb   # Main notebook (EDA → filtering → recommendations)
-├── u.data                                        # MovieLens 100K ratings (user_id, item_id, rating, timestamp)
-├── Movie_Id_Titles                               # Movie ID → title mapping
-├── My_Ratings.csv                                # Your own ratings used to generate recommendations
-└── README.md
-```
-
-## Pipeline
-
-| Step | What Happens |
-|------|--------------|
-| 1. Data loading | Merge ratings with movie titles into a single dataframe |
-| 2. EDA | Distribution of mean ratings and rating counts; most-rated vs. highest-rated movies |
-| 3. Single-movie filter | Correlate one movie (e.g. Titanic) against all others as a proof of concept |
-| 4. Full recommender | Movie–movie correlation matrix + personal ratings → ranked recommendations |
-
-## Getting Started
+## Setup
 
 ```bash
-git clone https://github.com/<your-username>/movie-recommender-system.git
-cd movie-recommender-system
-pip install pandas numpy matplotlib seaborn jupyter
-jupyter notebook Project -_Movie_Recommender_System.ipynb
+pip install -r requirements.txt
+
+cp .env.example .env        # then add your key
+export TMDB_API_KEY=your_key_here
 ```
 
-To get your own recommendations, edit `My_Ratings.csv` with movies you've seen (exact titles from the dataset) and your 1–5 ratings, then run the final section of the notebook.
+Get a free key at https://www.themoviedb.org/settings/api (Developer plan, non-commercial).
 
-## Tech Stack
+## Usage
 
-- **Python** — pandas, NumPy
-- **Visualization** — Matplotlib, Seaborn
-- **Method** — Item-based collaborative filtering with Pearson correlation
+```bash
+python recommender.py       # builds the model and prints a sample
+jupyter notebook Movie_Recommendation_System.ipynb
+```
 
-## Dataset
+```python
+from recommender import build, save, load
 
-[MovieLens 100K](https://grouplens.org/datasets/movielens/100k/) — 100,000 ratings from 943 users on 1,682 movies, collected by GroupLens Research.
+rec = build()
+save(rec)
 
-## Possible Extensions
+for movie_id, title, score in rec.recommend_by_title("Dune: Part Two"):
+    print(f"{score:.3f}  {title}")
+```
 
-- Matrix factorization (SVD) for latent-factor recommendations
-- Handling the cold-start problem for new users/movies
-- Serving recommendations via a FastAPI endpoint
+First run fetches ~500 films and takes a couple of minutes. Subsequent runs read from
+`.tmdb_cache/` and are near-instant.
 
-## License
+## Limitations
 
-MIT — use freely for interview prep, learning, or as a starting point for
-your own system design writeups.
+- Catalogue is 500 *popular* films — skews recent and mainstream, and drifts week to week.
+- Content-based only: no personalisation, no serendipity. The model finds films that look
+  alike on paper, never "people like you also enjoyed".
+- Evaluation uses genre overlap as a proxy. It confirms the model beats random; it does not
+  confirm the recommendations are good.
 
-## About Me
+## Roadmap
 
-**Vishal Kumar**
-- [GitHub](https://github.com/VishalKumar-GitHub)
+- `/discover/movie` for a larger, time-stratified catalogue
+- MovieLens CF signal blended with the content score
+- FastAPI serving endpoint
 
-📫 **Follow me** on [Xing](https://www.xing.com/profile/Vishal_Kumar055381/web_profiles?expandNeffi=true) | [LinkedIn](https://www.linkedin.com/in/vishal-kumar-819585275/)
+## Attribution
+
+This product uses the TMDB API but is not endorsed or certified by TMDB.
