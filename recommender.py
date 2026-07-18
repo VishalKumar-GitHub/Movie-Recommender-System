@@ -26,12 +26,16 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 API_KEY = os.environ.get("TMDB_API_KEY")
-if not API_KEY:
-    raise SystemExit("Set TMDB_API_KEY in your environment.")
 
 BASE = "https://api.themoviedb.org/3"
 CACHE = pathlib.Path(".tmdb_cache")
 CACHE.mkdir(exist_ok=True)
+
+def require_api_key() -> str:
+    api_key = os.environ.get("TMDB_API_KEY")
+    if not api_key:
+        raise SystemExit("Set TMDB_API_KEY in your environment.")
+    return api_key
 
 _session = requests.Session()
 
@@ -41,7 +45,7 @@ _session = requests.Session()
 # --------------------------------------------------------------------------
 
 def _get(path: str, **params) -> dict:
-    params.update(api_key=API_KEY, language="en-US")
+    params.update(api_key=require_api_key(), language="en-US")
     r = _session.get(f"{BASE}{path}", params=params, timeout=15)
     r.raise_for_status()
     return r.json()

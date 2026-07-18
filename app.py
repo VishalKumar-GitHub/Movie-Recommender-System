@@ -1,7 +1,7 @@
 import os
 import joblib
 import streamlit as st
-from recommender import build, load
+from recommender import build, load, save
 
 MODEL_PATH = "recommender.joblib"
 
@@ -13,31 +13,30 @@ st.markdown(
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
       .stApp { background: #17121A; color: #0E0B10; font-family: Inter, Helvetica, Arial, sans-serif; }
       .shimlana-logo { position:fixed; left:16px; top:12px; z-index:999; color:#FF2E4C; font-size:50px; font-weight:900; letter-spacing:0.08em; text-transform:uppercase; }
-      .hero { position:relative; min-height:520px; border-bottom:1px solid #2B2230; display:flex; align-items:flex-end; padding:48px 64px; overflow:hidden; }
-      .hero::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg, rgba(23,18,26,0.96) 0%, rgba(23,18,26,0.45) 35%, rgba(23,18,26,0.16) 100%); }
-      .hero-bg { position:absolute; inset:0; background-size:cover; background-position:center; filter:brightness(0.75); }
-      .hero-copy { position:relative; max-width:640px; z-index:1; }
-      .hero-eyebrow { text-transform:uppercase; letter-spacing:0.3em; font-size:12px; color:#FF2E4C; margin-bottom:16px; }
-      .hero-title { font-family:'Bricolage Grotesque', Inter, Helvetica, Arial, sans-serif; font-size:62px; line-height:0.96; margin:0 0 18px; color:#FFFFFF; }
-      .hero-overview { max-width:600px; color:#D4D0D6; font-size:18px; line-height:1.8; margin:0; }
-      .sticky-search { position:sticky; top:0; z-index:998; background:#17121A; border-bottom:1px solid #2B2230; padding:20px 64px 18px; }
-      .search-row { display:flex; gap:16px; max-width:1080px; margin:0 auto; }
-      .search-input input { width:100%; background:#1F1726 !important; color:#FFFFFF !important; border:1px solid #2B2230 !important; border-radius:12px !important; padding:16px 18px !important; font-size:16px; }
+      .hero { position:relative; min-height:640px; border-bottom:1px solid #2B2230; display:flex; align-items:flex-end; padding:52px 64px; overflow:hidden; }
+      .hero::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg, rgba(14,11,16,0.95) 0%, rgba(14,11,16,0.60) 28%, rgba(14,11,16,0.18) 100%); }
+      .hero-bg { position:absolute; inset:0; background-size:cover; background-position:center; filter:brightness(0.6); }
+      .hero-copy { position:relative; max-width:720px; z-index:1; }
+      .hero-eyebrow { text-transform:uppercase; letter-spacing:0.3em; font-size:12px; color:#FF2E4C; margin-bottom:18px; }
+      .hero-title { font-family:'Bricolage Grotesque', Inter, Helvetica, Arial, sans-serif; font-size:72px; line-height:0.92; margin:0 0 24px; color:#FFFFFF; }
+      .hero-overview { max-width:680px; color:#D4D0D6; font-size:18px; line-height:1.8; margin:0; }
+      .sticky-search { position:sticky; top:0; z-index:998; background:#17121A; border-bottom:1px solid #2B2230; padding:18px 64px 18px; }
+      .search-input input { width:100%; background:#1F1726 !important; color:#FFFFFF !important; border:1px solid #2B2230 !important; border-radius:16px !important; padding:16px 20px !important; font-size:16px; }
       .search-input input::placeholder { color:#7A7482 !important; }
-      .stButton>button { min-height:52px; background:#FF2E4C; color:#0E0B10; border-radius:12px; border:none; font-weight:700; padding:0 24px; }
+      .stButton>button { min-height:52px; background:#FF2E4C; color:#0E0B10; border-radius:14px; border:none; font-weight:700; padding:0 24px; }
       .stButton>button:hover { background:#ff616f; }
-      .row-section { padding:38px 0 0; }
+      .row-section { padding:40px 0 0; }
       .row-header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; }
       .row-label { font-size:22px; font-weight:700; color:#FFFFFF; }
       .row-note { color:#7A7482; font-size:14px; }
-      .row-scroll { display:flex; gap:16px; overflow-x:auto; padding-bottom:4px; }
+      .row-scroll { display:flex; gap:16px; overflow-x:auto; padding-bottom:8px; }
       .row-scroll::-webkit-scrollbar { height:10px; }
-      .row-scroll::-webkit-scrollbar-thumb { background:#2B2230; border-radius:6px; }
+      .row-scroll::-webkit-scrollbar-thumb { background:#FF2E4C; border-radius:6px; }
       .poster-card { width:220px; min-width:220px; background:#17121A; border:1px solid #2B2230; border-radius:18px; overflow:hidden; transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
       .poster-card:hover { transform:translateY(-6px); border-color:#FF2E4C; box-shadow:0 16px 48px rgba(0,0,0,0.35); }
       .poster-card img { width:100%; height:auto; display:block; }
-      .poster-meta { padding:14px 14px 18px; }
-      .poster-title { font-size:15px; font-weight:700; color:#FFFFFF; margin:0 0 4px; min-height:38px; line-height:1.2; }
+      .poster-meta { padding:16px 16px 18px; }
+      .poster-title { font-size:15px; font-weight:700; color:#FFFFFF; margin:0 0 6px; min-height:42px; line-height:1.25; }
       .poster-year { color:#7A7482; font-size:13px; margin-bottom:12px; }
       .poster-score { display:flex; align-items:center; justify-content:space-between; gap:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#FFFFFF; }
       .poster-score span { color:#FF2E4C; font-weight:700; }
@@ -209,7 +208,7 @@ if primary_genre:
 
 st.markdown(
     """
-    <div class='app-footer'>Type the name of a film above to update the recommendations and row focus.</div>
+    <div class='app-footer'>Use the search bar to focus the recommendation feed on a film you love.</div>
     """,
     unsafe_allow_html=True,
 )
