@@ -1,4 +1,5 @@
 # Movie Recommendation System
+<img width="2560" height="1280" alt="Shimlana_banner_dark" src="https://github.com/user-attachments/assets/e4a7f900-b313-4c3d-83f8-2972ef7b2738" />
 
 A content-based movie recommender built on TMDB metadata. Given a film, it returns the
 ten most similar titles, ranked by cosine similarity over a TF-IDF representation of
