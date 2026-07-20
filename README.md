@@ -107,3 +107,10 @@ git push -u origin main
 Notes:
 - Add `recommender.joblib` to `.gitignore` (the app will build it on first run if missing).
 - Ensure `requirements.txt` includes `streamlit`.
+
+ ## About Me
+
+**Vishal Kumar**
+- [GitHub](https://github.com/VishalKumar-GitHub)
+
+📫 **Follow me** on [Xing](https://www.xing.com/profile/Vishal_Kumar055381/web_profiles?expandNeffi=true) | [LinkedIn](https://www.linkedin.com/in/vishal-kumar-819585275/)
